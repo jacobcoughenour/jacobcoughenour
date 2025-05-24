@@ -1,0 +1,15 @@
+{{ $options := dict
+	"inlineImports" true
+	"transpiler" "libsass"
+	"targetPath" "main.css"
+	"vars" site.Params.styles
+	"enableSourceMap" (not hugo.IsProduction)
+	"includePaths" (slice "node_modules")
+}}
+{{- $styles := resources.Get "css/styles.scss" | css.Sass $options | postCSS (dict "config" "./assets/css/postcss.config.mjs") -}}
+{{- if hugo.IsServer }}
+{{ $styles = $styles | fingerprint | resources.ExecuteAsTemplate (printf "css/styles.dev.%v.css" now.UnixMilli) .}}
+{{ else }}
+{{ $styles = $styles | minify | fingerprint | resources.PostProcess }}
+{{ end -}}
+<link rel="stylesheet" href="{{ $styles.RelPermalink }}">

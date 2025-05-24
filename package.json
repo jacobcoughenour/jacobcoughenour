@@ -1,0 +1,40 @@
+{
+  "name": "hugo-tailwindcss-starter",
+  "description": "Starter project for Hugo and TailwindCSS v4.0, ready to deploy in Vercel!",
+  "version": "2.0.0",
+  "license": "MIT",
+  "author": "Odhy Pradhana (odhyp.com)",
+  "keywords": [
+    "hugo",
+    "tailwindcss",
+    "tailwindcss-v4",
+    "vercel"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odhyp/hugo-tailwindcss-starter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/odhyp/hugo-tailwindcss-starter/issues"
+  },
+  "homepage": "https://github.com/odhyp/hugo-tailwindcss-starter#readme",
+  "scripts": {
+    "dev": "hugo server -D",
+    "build": "hugo --gc --minify",
+    "watch": "hugo server --disableFastRender --navigateToChanged"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.0.1",
+    "7.css": "^0.18.0",
+    "postcss": "^8.5.1",
+    "postcss-cli": "^11.0.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^4.0.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss-import": "^16.1.0",
+    "postcss-scss": "^4.0.9"
+  }
+}

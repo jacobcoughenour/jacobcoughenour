@@ -1,0 +1,43 @@
+{{ define "main" }}
+<div class="mx-auto w-full max-w-full text-center">
+  <h1 class="oi-regular text-left leading-[0.9] mt-20" style="font-size: 90px;">
+    <span>Jacob</span>
+    <span>Coughenour</span>
+  </h1>
+
+  <div class="mt-1 w-full">
+    <div
+      class="float-right mr-32"
+    >
+      <a class="inline-flex w-24 items-center justify-center space-x-1" role="button" href="https://bsky.app/profile/jacobcoughenour.com"
+        ><img src="/icons/bluesky.png" width="16" height="16" /><span
+          >Bluesky</span
+        ></a
+      >
+      <a class="inline-flex w-24 items-center justify-center space-x-1" role="button" href="https://www.youtube.com/@jacobcoughenour"
+        ><img src="/icons/youtube.png" width="16" height="16" /><span
+          >YouTube</span
+        ></a
+      >
+      <a class="inline-flex w-24 items-center justify-center space-x-1" role="button" href="https://github.com/jacobcoughenour"
+        ><img src="/icons/github.png" width="16" height="16" /><span
+          >GitHub</span
+        ></a
+      >
+    </div>
+  </div>
+
+  <div class="window glass active mt-12">
+    <div class="title-bar">
+      <div class="title-bar-text">Recent Posts</div>
+    </div>
+    <div class="window-body has-space">
+      {{ range .Pages.ByPublishDate.Reverse }}
+      <a href="{{ .Permalink }}">{{ .Title }}</a>
+      <br><time></b> {{ .Date.Format "02 Jan 2006" }}</time>
+      <br><br>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

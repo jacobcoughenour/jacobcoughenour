@@ -1,0 +1,111 @@
+:root {
+  --listview-chevron-size: 5px;
+  --listview-background: #ffffff;
+  --listview-border: 1px solid;
+  --listview-border-color: #eeeeee;
+  --listview-border-color-header: #d7d7d7;
+  --listview-gradient: linear-gradient(
+    to bottom,
+    #ffffff 45%,
+    #fafafa 45%,
+    #f0f0f0
+  );
+  --listview-header-border-color-highlight: #a7d8f5;
+  --listview-header-gradient-highlight: linear-gradient(
+    to bottom,
+    #f3f9fc 45%,
+    #e4f0f8 45%,
+    #d9eaf5
+  );
+  --listview-header-chevron-background: linear-gradient(
+    to bottom right,
+    #667f91 45%,
+    #90c1e2 65%,
+    #cce3f2
+  );
+}
+
+table {
+  font: var(--font);
+  background-color: var(--listview-background);
+  border: 1px solid #c0c1cd;
+
+  border-collapse: collapse;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  table-layout: fixed;
+
+  td,
+  th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.has-shadow {
+    box-shadow: 4px 4px 3px -2px #999;
+  }
+
+  > thead > tr > * {
+    background: var(--listview-gradient);
+    border: var(--listview-border) var(--listview-border-color-header);
+    box-sizing: border-box;
+    font-weight: 400;
+    height: 22px;
+    padding: 0 var(--grouped-element-spacing);
+    position: sticky;
+    top: 0;
+    cursor: default;
+
+    &.highlighted {
+      border: var(--listview-border)
+        var(--listview-header-border-color-highlight);
+      background: var(--listview-header-gradient-highlight);
+      border-radius: var(--border-radius);
+
+      &:not(:last-child) {
+        border-right-color: var(--listview-header-border-color-highlight);
+      }
+
+      &.indicator {
+        &::before {
+          content: "";
+          position: absolute;
+          right: 50%;
+          top: 0;
+          width: calc(var(--listview-chevron-size) * 1.2);
+          height: var(--listview-chevron-size);
+          background: var(--listview-header-chevron-background);
+          clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+        }
+        &.up::before {
+          clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+        }
+      }
+    }
+  }
+
+  > tbody > tr {
+    cursor: default;
+
+    &.highlighted {
+      border: var(--listview-border) var(--item-highlighted-border);
+      background: var(--item-highlighted-background);
+      border-radius: var(--border-radius);
+
+      > *:not(:last-child) {
+        border-right: none;
+      }
+    }
+
+    > * {
+      height: 14px;
+      padding: 2px var(--element-spacing);
+    }
+
+    > *:not(:last-child) {
+      border-right: var(--listview-border) var(--listview-border-color);
+    }
+  }
+}

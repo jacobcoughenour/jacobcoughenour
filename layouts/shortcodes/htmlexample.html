@@ -1,0 +1,6 @@
+{{.Inner}} {{- if .Get 0 | default "" }}
+<details class="mt-2">
+  <summary>Show code</summary>
+  {{ transform.Highlight (strings.TrimSpace .Inner ) "html" }}
+</details>
+{{- end -}}

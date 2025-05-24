@@ -1,0 +1,117 @@
+@import "./assets/css/7.css/gui/_variables.scss";
+@import "./assets/css/7.css/gui/_global.scss";
+@import "./assets/css/7.css/gui/_balloon.scss";
+@import "./assets/css/7.css/gui/_button.scss";
+@import "./assets/css/7.css/gui/_checkbox.scss";
+@import "./assets/css/7.css/gui/_collapse.scss";
+@import "./assets/css/7.css/gui/_combobox.scss";
+@import "./assets/css/7.css/gui/_dropdown.scss";
+@import "./assets/css/7.css/gui/_groupbox.scss";
+@import "./assets/css/7.css/gui/_listbox.scss";
+@import "./assets/css/7.css/gui/_listview.scss";
+@import "./assets/css/7.css/gui/_menu.scss";
+@import "./assets/css/7.css/gui/_progressbar.scss";
+@import "./assets/css/7.css/gui/_radiobutton.scss";
+@import "./assets/css/7.css/gui/_scrollbar.scss";
+@import "./assets/css/7.css/gui/_searchbox.scss";
+@import "./assets/css/7.css/gui/_slider.scss";
+@import "./assets/css/7.css/gui/_spinner.scss";
+@import "./assets/css/7.css/gui/_tabs.scss";
+@import "./assets/css/7.css/gui/_textbox.scss";
+@import "./assets/css/7.css/gui/_treeview.scss";
+@import "./assets/css/7.css/gui/_typography.scss";
+@import "./assets/css/7.css/gui/_window.scss";
+
+@import "tailwindcss";
+
+:root {
+  --button-transition-speed: 0.1s;
+  --button-transition-speed-slow: 0.2s;
+
+  --background: oklab(0.26 0.03 -0.04);
+  --on-background: oklab(0.98 0.03 -0.04);
+  --surface: oklab(0.99 0.03 -0.04);
+  --on-surface: oklab(0.1 -0.02 0.01);
+
+  --primary: oklab(0.89 -0.16 0.1);
+
+  --border-color: oklab(0.5 0.03 -0.04);
+  --border-color-inner: oklab(1 0.03 -0.04);
+
+  --window-background-color: oklab(0.68 0.08 -0.04);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--on-background);
+  font-size: 18px;
+}
+
+#bg-canvas {
+  display: block;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.window-body {
+  color: var(--background);
+}
+
+.oi-regular {
+  font-family: "Oi", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+article {
+
+  [role="button"],
+  button {
+    min-width: 75px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply mb-2 mt-4;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
+
+  h2 {
+    @apply text-xl;
+  }
+
+  p {
+    font-size: 18px;
+    @apply my-2;
+  }
+
+  img {
+    max-height: 640px;
+    @apply my-2 bg-slate-500/15;
+    @apply block mx-auto rounded-md border border-4;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: inset 0 0 0 1px var(--border-color-inner);
+  }
+
+  p>code {
+    @apply px-2 bg-slate-500/15;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: inset 0 0 0 1px var(--border-color-inner);
+  }
+
+  pre>code {
+    margin: 0;
+  }
+}
