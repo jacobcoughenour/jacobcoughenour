@@ -306,6 +306,8 @@
 		const bgColorRgbUniform = gl.getUniformLocation(shaderProgram, "u_bgColorRgb");
 		const parts = [0.17, 0.11, 0.22];
 
+		const start = Date.now();
+
 		function draw(delta) {
 			gl.canvas.width = window.innerWidth;
 			gl.canvas.height = window.innerHeight;
@@ -317,7 +319,7 @@
 
 			gl.uniform2fv(canvasSizeUniform, [gl.canvas.width, gl.canvas.height]);
 			gl.uniform1f(scrollUniform, -document.body.getBoundingClientRect().top)
-			gl.uniform1f(timeUniform, performance.now() * 0.001);
+			gl.uniform1f(timeUniform, ((start + performance.now() ) % 10000000) * 0.001);
 			gl.uniform3fv(bgColorRgbUniform, parts);
 
 
