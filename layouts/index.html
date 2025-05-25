@@ -1,11 +1,10 @@
 {{ define "main" }}
 <div class="mx-auto w-full max-w-full flex flex-col items-center">
-  <div class="mt-32">
+  <div class="mt-16 md:mt-24 lg:mt-32 transition-all">
     <h1 class="oi-regular flex flex-col text-left leading-[0.9] transition-all text-[48px] sm:text-[54px] md:text-[72px] lg:text-[96px]">
       <span>Jacob</span>
       <span>Coughenour</span>
     </h1>
-
     <div class="float-right">
       <a class="inline-flex w-24 items-center justify-center space-x-1" role="button" href="https://bsky.app/profile/jacobcoughenour.com"
         ><img src="/icons/bluesky.png" width="16" height="16" /><span
@@ -25,7 +24,6 @@
     </div>
   </div>
 
-
   <div class="window glass active mt-12 max-w-lg mx-auto">
     <div class="title-bar">
       <div class="title-bar-text inline-flex space-x-1">
@@ -35,7 +33,7 @@
         >
       </div>
     </div>
-    <div class="window-body has-space">
+    <div class="window-body has-space text-center">
       <div class="m-1">
         {{ range ( where .Site.RegularPages "Type" "posts" | first 3 ) }}
         <a href="{{ .RelPermalink }}" class="w-full inline-flex space-x-4 items-center">
