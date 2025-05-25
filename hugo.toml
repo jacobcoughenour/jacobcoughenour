@@ -1,6 +1,10 @@
 languageCode = 'en-us'
 title = 'Jacob Coughenour'
 
+[Author]
+    name = "Jacob Coughenour"
+    email = "me@jacobcoughenour.com"
+
 [markup]
   [markup.tableOfContents]
     endLevel = 8

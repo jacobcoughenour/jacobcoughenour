@@ -1,3 +1,18 @@
+
+<div class="mt-4 mb-8 mx-auto">
+  <img id="ad" class="hidden h-32 max-w-80" />
+  <script>
+    const files = [
+    {{ range readDir "static/ads" }}
+      "/ads/{{ .Name }}",
+    {{ end }}
+    ];
+    const el = document.getElementById("ad");
+    el.src = files[Math.floor(Math.random() * files.length)];
+    el.classList.remove("hidden");
+  </script>
+</div>
+
 <footer class="flex bottom-0 mx-auto w-screen max-w-4xl px-6 py-4 font-mono items-center space-x-8">
   <hr class="grow bar-separator" />
   <p class="text-center text-sm opacity-50">
