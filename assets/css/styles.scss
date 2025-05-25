@@ -41,7 +41,7 @@
 
   --window-background-color: oklab(0.68 0.08 -0.04);
 
-  --link-color: oklab(0.52 -0.4 -0.0);
+  --link-color: oklab(0.5 -0.4 -0.0);
 }
 
 body {
@@ -85,6 +85,64 @@ label {
   font-family: "Oi", serif;
   font-weight: 400;
   font-style: normal;
+}
+
+hr {
+  border-color: var(--border-color);
+  opacity: 0.5;
+}
+
+hr.bar-separator {
+  opacity: 0.5;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 0 0 1px var(--border-color-inner);
+}
+
+.toc-root {
+  a {
+    @apply text-sm;
+  }
+
+  a.active {
+    font-weight: 600;
+    @apply text-sm;
+    color: var(--link-color);
+
+    &:before {
+      content: "» ";
+      font-weight: 600;
+      @apply text-base;
+    }
+  }
+
+}
+
+#comments-section {
+  .comment {
+    padding: 10px 0;
+  }
+  .author {
+      font-weight: bold;
+  }
+  .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+  }
+  .nested-replies {
+      margin-left: 20px;
+      padding-left: 10px;
+  }
+  .actions {
+      font-size: 12px;
+      color: #666;
+  }
+  .nested-replies .comment {
+      margin-bottom: 0;
+  }
 }
 
 article {

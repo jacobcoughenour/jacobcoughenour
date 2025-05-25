@@ -1,38 +1,114 @@
 {{ define "main" }}
-<div class="window glass active">
-  <div class="title-bar">
-    <div class="title-bar-text inline-flex space-x-1">
-      <img src="/icons/abode.png" height="16" width="16" />
-      <span
-        >Abode Aerobat Reader [LICENSE EXPIRED] - {{ .File.Dir }}{{ .File
-        }}_final.pdf</span
-      >
-    </div>
-  </div>
-  <div class="window-body has-space">
-    <section class="mx-4">
-      {{ with .Params.draft }}
-        <span class="border px-1 text-xs mr-1">DRAFT</span>
-      {{ end }}
-      <h1 class="mt-4 mb-2 text-4xl leading-none">{{ .Title }}</h1>
-      {{ with .Date }} {{ $dateMachine := . | time.Format
-        "2006-01-02T15:04:05-07:00" }} {{ $dateHuman := . | time.Format
-          ":date_long" }}
-      <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
-      {{ end }}
-      <div class="mt-2">{{ partial "tags.html" .}}</div>
-      <article>{{ .Content }}</article>
-      <aside>
-        {{ with .GetTerms "tags" }}
-        <div>{{ (index . 0).Parent.LinkTitle }}</div>
-        <ul>
-          {{ range . }}
-          <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
-          {{ end }}
-        </ul>
-        {{ end }}
-      </aside>
-    </section>
-  </div>
+<div class="relative">
+
+	<div class="absolute top-4 transition-all left-[80%] opacity-0 xl:left-full xl:opacity-100">
+		<div class="fixed ml-3">
+			<div class="window glass active xl:w-44 2xl:w-80 transition-all">
+				<div class="title-bar">
+					<div class="title-bar-text inline-flex space-x-1">
+						<img src="/icons/abode.png" height="16" width="16" />
+						<span>Document Overview</span>
+					</div>
+				</div>
+				<div class="window-body has-space toc-root">
+					{{ .TableOfContents }}
+					{{- if .Params.bsky }}
+					<hr class="mt-1 mb-0" />
+					<a href="#comments">Comments</a>
+					{{- end }}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="window glass active overflow-hidden">
+		<div class="title-bar overflow-hidden text-nowrap">
+			<div class="title-bar-text inline-flex space-x-1">
+				<img src="/icons/abode.png" height="16" width="16" />
+				<span>Abode Aerobat Reader [LICENSE EXPIRED] - {{ .File.Dir }}{{ .File
+					}}_final.pdf</span
+				>
+			</div>
+		</div>
+		<div class="window-body has-space overflow-hidden text-ellipsis">
+			<section class="mx-4">
+				{{ with .Params.draft }}
+					<span class="border px-1 text-xs mr-1">DRAFT</span>
+				{{ end }}
+				<h1 class="mt-4 mb-2 text-4xl leading-none">{{ .Title }}</h1>
+				{{ with .Date }} {{ $dateMachine := . | time.Format
+					"2006-01-02T15:04:05-07:00" }} {{ $dateHuman := . | time.Format
+						":date_long" }}
+				<time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+				{{ end }}
+				<div class="mt-2">{{ partial "tags.html" .}}</div>
+				<article id="article-root">{{ .Content }}</article>
+				<aside>
+					{{ with .GetTerms "tags" }}
+					<div>{{ (index . 0).Parent.LinkTitle }}</div>
+					<ul>
+						{{ range . }}
+						<li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+						{{ end }}
+					</ul>
+					{{ end }}
+				</aside>
+			</section>
+		</div>
+	</div>
+
+	{{- if .Params.bsky }}
+	<div class="window glass active mt-4 overflow-hidden" id="comments">
+		<div class="title-bar">
+			<div class="title-bar-text inline-flex space-x-1">
+				<img src="/icons/bluesky.png" height="16" width="16" />
+				<span>Bluesky - Thread</span>
+			</div>
+		</div>
+		<div class="window-body flex flex-col overflow-hidden">
+			<code class="border-b px-2 py-0.5">{{ .Params.bsky }}</code>
+			<div class="mx-4 my-2 grow" id="comments-section" data-bsky-uri="{{ .Params.bsky }}"></div>
+				{{ $comments := resources.Get "js/comments.js" }}
+				<script src="{{ $comments.RelPermalink }}"></script>
+			</div>
+		</div>
+	</div>
+	{{- end }}
 </div>
+
+<script>
+	function init() {
+		const article = document.querySelector("article#article-root");
+		const toc = document.querySelector(".toc-root");
+		const tocAnchors = toc.querySelectorAll("a");
+		const articleHeaders = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+		const commentsWindow = document.querySelector("#comments");
+
+		function scroll() {
+			const offsets = [...articleHeaders, commentsWindow]
+				.filter(e => !!e)
+				.map(e => [e.id, e.getBoundingClientRect().top])
+				.sort(e => e[1] - e[0]);
+			var i = offsets.findIndex(e => e[1] - 160 > 0);
+			if (i === -1)
+				i = offsets.length;
+			i = Math.max(0, i - 1);
+			const activeFragment = offsets[i][0];
+			tocAnchors.forEach(e => {
+				const fragmentIndex = e.href.indexOf("#");
+				const fragment = e.href.slice(fragmentIndex + 1);
+				const isActive = fragment === activeFragment;
+				if (isActive) {
+					!e.classList.contains("active") && e.classList.add("active");
+				} else {
+					e.classList.remove("active");
+				}
+			})
+		}
+		window.onscroll = scroll;
+		scroll();
+	}
+	window.onload = init;
+</script>
+
 {{ end }}

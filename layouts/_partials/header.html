@@ -1,5 +1,22 @@
 {{ if (not .IsHome) }}
-<header class="mx-auto w-screen max-w-4xl px-4 py-6">
+<header class="mx-auto inline-flex flex-col md:flex-row w-screen max-w-4xl px-6 py-6 justify-center space-x-6">
   <a href="/" class="oi-regular text-2xl">Jacob Coughenour</a>
+  <div class="grow inline-flex space-x-4 justify-center items-center">
+    <a role="button" href="/posts" class="inline-flex items-center justify-center space-x-1">
+      <img src="/icons/folder.png" width="16" height="16" /><span>All Posts</span>
+    </a>
+    <hr class="grow bar-separator"/>
+    <div class="inline-flex space-x-1">
+      <a class="inline-flex items-center justify-center space-x-1" role="button" href="https://bsky.app/profile/jacobcoughenour.com"
+        ><img src="/icons/bluesky.png" width="16" height="16" /></a
+      >
+      <a class="inline-flex items-center justify-center space-x-1" role="button" href="https://www.youtube.com/@jacobcoughenour"
+        ><img src="/icons/youtube.svg" width="16" height="16" /></a
+      >
+      <a class="inline-flex items-center justify-center space-x-1" role="button" href="https://github.com/jacobcoughenour"
+        ><img src="/icons/github.svg" width="16" height="16" /></a
+      >
+    </div>
+  </div>
 </header>
 {{ end }}

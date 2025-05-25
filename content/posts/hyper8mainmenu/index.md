@@ -4,6 +4,7 @@ date = 2025-05-24T08:01:26-04:00
 draft = true
 tags = ['godot', 'hyper8']
 thumb = 'old.png'
+bsky = 'https://bsky.app/profile/justinbaragona.bsky.social/post/3lpyu5vwpnc2t'
 +++
 
 <!-- put a video of the final product here -->
