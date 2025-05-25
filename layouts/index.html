@@ -15,28 +15,46 @@
         ></a
       >
       <a class="inline-flex w-24 items-center justify-center space-x-1" role="button" href="https://www.youtube.com/@jacobcoughenour"
-        ><img src="/icons/youtube.png" width="16" height="16" /><span
+        ><img src="/icons/youtube.svg" width="16" height="16" /><span
           >YouTube</span
         ></a
       >
       <a class="inline-flex w-24 items-center justify-center space-x-1" role="button" href="https://github.com/jacobcoughenour"
-        ><img src="/icons/github.png" width="16" height="16" /><span
+        ><img src="/icons/github.svg" width="16" height="16" /><span
           >GitHub</span
         ></a
       >
     </div>
   </div>
 
-  <div class="window glass active mt-12">
+  <div class="window glass active mt-12 max-w-lg mx-auto">
     <div class="title-bar">
-      <div class="title-bar-text">Recent Posts</div>
+      <div class="title-bar-text inline-flex space-x-1">
+        <img src="/icons/folder.png" height="16" width="16" />
+        <span
+          >Recent Posts</span
+        >
+      </div>
     </div>
     <div class="window-body has-space">
-      {{ range .Pages.ByPublishDate.Reverse }}
-      <a href="{{ .Permalink }}">{{ .Title }}</a>
-      <br><time></b> {{ .Date.Format "02 Jan 2006" }}</time>
-      <br><br>
-      {{ end }}
+      <div class="m-1">
+        {{ range ( where .Site.RegularPages "Type" "posts" | first 3 ) }}
+        <a href="{{ .RelPermalink }}" class="w-full inline-flex space-x-4 items-center">
+          <div class="w-16 h-16">
+            <img class="w-16 h-16 object-cover border" src="{{ if .Params.thumb }}{{ .RelPermalink }}{{ .Params.thumb }}{{ else }}{{ "/icons/typewriter.gif" }}{{ end }}" />
+          </div>
+          <div class="text-left">
+            <h3 class="text-base font-semibold">
+              {{ .Title }}
+            </h3>
+            <div class="text-xs mb-2">
+              {{ .Date.Format "Mon, Jan 2, 2006" }}
+            </div>
+          </div>
+        </a>
+        {{ end }}
+      </div>
+      <a class="text-sm" href="/posts">View All »</a>
     </div>
   </div>
 </div>

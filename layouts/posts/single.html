@@ -4,7 +4,7 @@
     <div class="title-bar-text inline-flex space-x-1">
       <img src="/icons/abode.png" height="16" width="16" />
       <span
-        >Abode Reader [Trial Version] - {{ .File.Dir }}{{ .File
+        >Abode Aerobat Reader [LICENSE EXPIRED] - {{ .File.Dir }}{{ .File
         }}_final.pdf</span
       >
     </div>
@@ -17,6 +17,7 @@
       ":date_long" }}
       <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
       {{ end }}
+      <div class="mt-2">{{ partial "tags.html" .}}</div>
       <article>{{ .Content }}</article>
       <aside>
         {{ with .GetTerms "tags" }}

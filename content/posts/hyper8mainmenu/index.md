@@ -2,6 +2,8 @@
 title = 'How I made the main menu for my Godot game'
 date = 2025-05-24T08:01:26-04:00
 draft = true
+tags = ['godot', 'hyper8']
+thumb = 'old.png'
 +++
 
 <!-- put a video of the final product here -->

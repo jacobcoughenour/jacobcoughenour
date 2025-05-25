@@ -1,12 +1,41 @@
-<article class="post">
-  <header>
-    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-    <div class="post-meta">
-      {{ .Date.Format "Mon, Jan 2, 2006" }} - {{ .FuzzyWordCount }} Words
+<a role="button" class="post inline-flex w-full text-left items-center space-x-4 h-16" href="{{ .RelPermalink }}">
+
+  <div class="w-12 h-12">
+    <img class="w-12 h-12 object-cover border" src="{{ if .Params.thumb }}{{ .RelPermalink }}{{ .Params.thumb }}{{ else }}{{ "/icons/typewriter.gif" }}{{ end }}" />
+  </div>
+  
+  <div class="grow text-left items-stretch">
+    <div class="text-base font-semibold">
+      {{ .Title }}
     </div>
-  </header>
-  {{ .Summary }}
-  <footer>
-    <a href="{{ .RelPermalink }}">Read&nbsp;more&nbsp;&raquo;</a>
-  </footer>
-</article>
+    <div class="flex space-x-1">
+      <div class="grow font-semibold">
+        {{ .RelPermalink }}
+      </div>
+      <div class="w-56">
+        <label>Tags:</label>
+        {{ $taxonomy := "tags" }}
+        {{ with .Param $taxonomy }}
+        <ul class="inline-flex space-x-1">
+          {{ range $index, $tag := . }}
+            {{ with $.Site.GetPage (printf "/%s/%s" $taxonomy $tag) -}}
+            <li class="text-xs font-semibold">
+              {{ $tag }}
+            </li>
+            {{- end -}}
+          {{- end -}}
+        </ul>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+  <div class="text-left flex flex-col justify-center min-w-64">
+    <div class="space-x-1">
+      <label>Date modified:</label><span class="font-semibold">{{ .Date.Format "Mon, Jan 2, 2006" }}</span>
+    </div>
+    <div class="space-x-1">
+      <label>Size:</label><span class="font-semibold">{{ .FuzzyWordCount }} Words</span>
+    </div>
+  </div>
+
+</a>
