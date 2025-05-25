@@ -5,7 +5,8 @@
   </div>
   
   <div class="grow text-left items-stretch">
-    <div class="text-base font-semibold">
+    <div class="text-base font-semibold leading-none">
+      {{ with .Params.draft }}<span class="border px-1 text-xs mr-1">DRAFT</span>{{ end }}
       {{ .Title }}
     </div>
     <div class="flex space-x-1">
