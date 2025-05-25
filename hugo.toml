@@ -9,3 +9,8 @@ title = 'Jacob Coughenour'
   [markup.tableOfContents]
     endLevel = 8
     startLevel = 1
+
+[params.meta]
+  author = "Jacob Coughenour"
+  msColor = "#2e233e"
+  iOSColor = "#2e233e"
