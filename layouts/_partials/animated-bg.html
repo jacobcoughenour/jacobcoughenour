@@ -1,13 +1,10 @@
 <canvas id="bg-canvas"></canvas>
-
 <script>
-
 	const vertex = `
 attribute vec4 a_vertexPos;
 void main(void) {
 	gl_Position = a_vertexPos;
 }`;
-
 	const fragment = `
 precision mediump float;
 uniform vec2 u_resolution;
@@ -273,7 +270,6 @@ void main(void) {
 	}
 
 	function init() {
-
 		/** @type {WebGLRenderingContext} **/
 		const gl = initWebGLCanvas();
 		if (!gl)

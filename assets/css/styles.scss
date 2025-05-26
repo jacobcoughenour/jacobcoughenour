@@ -103,7 +103,7 @@ hr.bar-separator {
 
 .toc-root {
   a {
-    @apply text-sm transition-all;
+    @apply text-sm;
   }
 
   a.active {
@@ -114,7 +114,7 @@ hr.bar-separator {
     &:before {
       content: "» ";
       font-weight: 600;
-      @apply text-base transition-all;
+      @apply text-base;
     }
   }
 

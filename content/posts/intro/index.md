@@ -2,7 +2,7 @@
 title = 'The blog'
 date = 2025-05-24T08:01:26-04:00
 tags = ['web']
-bsky = 'https://bsky.app/profile/jacobcoughenour.com/post/3lpyu5vwpnc2t'
+bsky = 'https://bsky.app/profile/jacobcoughenour.com/post/3lq3c6v3qnk2t'
 +++
 
 {{< figure src="/icons/typewriter.gif" alt="typewritter" >}}
@@ -19,7 +19,7 @@ This site is generated using [Hugo](https://gohugo.io/). It's a static site gene
 
 I'm using [Cloudflare Pages](https://pages.cloudflare.com/) to actually host the site and [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/) to host any small video files I embed in the posts.
 
-I started with [this template](https://github.com/odhyp/hugo-tailwindcss-starter) that configures TailwindCSS v4 with Hugo for me. It also came with some neat little devtools that I'm guessing [odhy](https://github.com/odhyp) made like this one that shows you all the Hugo variables the page was generated with.
+I started with [this template](https://github.com/odhyp/hugo-tailwindcss-starter) that configures TailwindCSS v4 with Hugo for me. It also came with some neat little devtools (that I'm guessing [odhy](https://github.com/odhyp) made) like this one that shows you all the Hugo variables the page was generated with.
 
 {{< figure src="variables.png" alt="variables devtool" >}}
 
