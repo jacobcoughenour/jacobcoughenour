@@ -101,7 +101,7 @@ hr.bar-separator {
 
 .toc-root {
   a {
-    @apply text-sm;
+    @apply text-sm transition-all;
   }
 
   a.active {
@@ -112,7 +112,7 @@ hr.bar-separator {
     &:before {
       content: "» ";
       font-weight: 600;
-      @apply text-base;
+      @apply text-base transition-all;
     }
   }
 
@@ -173,7 +173,7 @@ article {
     @apply my-2;
   }
 
-  img {
+  img, video {
     max-height: 640px;
     @apply my-2;
     @apply block mx-auto rounded-md border border-4;
