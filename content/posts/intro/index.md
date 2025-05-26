@@ -15,7 +15,7 @@ I've been wanting to update my website for a while now. Up until now it just had
 
 This site is generated using [Hugo](https://gohugo.io/). It's a static site generator that takes a directory of markdown files and turns it into a full site. I only chose Hugo because I saw passivestar use it and wanted to try it out. I would have ended up making some SvelteKit contraption otherwise. 
 
-{{< video src="https://static.jacobcoughenour.com/fallalready.webm" >}}
+{{< video src="https://static.jacobcoughenour.com/fallalready.webm" class="h-64" >}}
 
 I'm using [Cloudflare Pages](https://pages.cloudflare.com/) to actually host the site and [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/) to host any small video files I embed in the posts.
 
