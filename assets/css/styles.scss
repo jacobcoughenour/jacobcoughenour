@@ -52,6 +52,11 @@ body {
   font-size: 18px;
 }
 
+.godot_class {
+  background-color: oklab(0.426 0.03 -0.04);
+  color: oklab(0.92 0.03 -0.04);
+}
+
 label {
   opacity: 0.8;
   @apply font-normal;
@@ -179,7 +184,7 @@ article {
     @apply my-2;
   }
 
-  img, video {
+  figure img, p>img, figure video {
     max-height: 640px;
     @apply my-2;
     @apply block mx-auto border border-4;
