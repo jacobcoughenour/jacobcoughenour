@@ -53,8 +53,11 @@ body {
 }
 
 .godot_class {
-  background-color: oklab(0.426 0.03 -0.04);
-  color: oklab(0.92 0.03 -0.04);
+  background-color: var(--border-color-inside);
+  border: 1px solid var(--border-color);
+  color: var(--on-surface);
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 0 0 1px var(--border-color-inner);
 }
 
 label {
