@@ -19,17 +19,35 @@ Rim
 
 # The Blur
 
-The Center part seems to be a simple blur of the background. Nothing special; should be easy to recreate. So let's start there.
+The center part seems to be a simple blur of the background. It should be easy to recreate so let's start there.
 
 Godot has this really easy way of blurring the screen in a shader. It's basically built-in.
-```glsl
+
+{{< code lang=glsl filename=liquidglass.gdshader id=step_1 >}}
+shader_type canvas_item;
+
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
-...
+uniform float blur = 2.0;
+
 void fragment() {
-	vec3 screen_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, blur);
-	...
+	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, blur);
 }
-```
+{{< /code >}}
+
+{{< code lang=glsl filename=liquidglass.gdshader diff=step_1 >}}
+shader_type canvas_item;
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
+
+void fragment() {
+	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, blur);
+	different line added here
+}
+{{< /code >}}
+
+![alt text](blur0.png){width=33.3%}
+![alt text](blur2.png)
+![alt text](blur8.png)
+
 The key here is `filter_linear_mipmap` and the third parameter of `textureLod()`. It is telling Godot to generate multiple smaller resolution versions of the screen texture so when you pass anything greater than 0.0 into `textureLod()` it will blend between those LOD levels when sampling the texture.
 
 - show the screen at different lod levels
