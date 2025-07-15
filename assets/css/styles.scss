@@ -30,10 +30,10 @@
 
   --background: oklab(0.26 0.03 -0.04);
   --on-background: oklab(0.98 0.03 -0.04);
-  --surface: oklab(0.99 0.03 -0.04);
+  --surface: oklab(0.95 0.03 -0.04);
   --on-surface: oklab(0.1 -0.02 0.01);
 
-  --primary: oklab(0.8 -0.27 0.0);
+  --tab-bg: oklab(0.999 0.03 -0.04);
 
   --border-color: oklab(0.5 0.03 -0.04);
   --border-color-inner: oklab(1 0.03 -0.04);
@@ -44,6 +44,10 @@
   --window-background-color: oklab(0.68 0.08 -0.04);
 
   --link-color: oklab(0.5 -0.4 -0.0);
+  --link-color-hovered: oklab(0.5 -0.4 -0.0);
+
+  --primary-color: oklab(0.8 -0.27 0.0);
+
 }
 
 body {
@@ -70,6 +74,10 @@ label {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   box-shadow: inset 0 0 0 1px var(--border-color-inner);
+}
+
+.bg-tab {
+  background-color: var(--tab-bg);
 }
 
 #bg-canvas {
@@ -159,7 +167,13 @@ video::-webkit-media-controls{
   }
 }
 
-article {
+article#article-root {
+
+  margin: 12px -14px 8px -14px;
+  padding: 14px;
+  clear: both;
+  background: var(--tab-bg);
+  border: var(--tab-border);
 
   [role="button"],
   button {

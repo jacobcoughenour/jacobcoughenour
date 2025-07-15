@@ -1,3 +1,19 @@
 {{ define "main" }}
-<h1>404 Page</h1>
+<div class="window active mx-auto mt-16" style="max-width: 300px">
+	<div class="title-bar">
+		<div class="title-bar-text">Error</div>
+	</div>
+	<div class="window-body flex flex-col">
+		<div class="flex bg-tab p-[25px] grow">
+			<img class="shrink-0 w-8 h-8 mr-2" src="/icons/error.png"/>
+			<div class="grow">
+				<h1 class="text-primary text-lg">Error code 404</h1>
+				<p>The page was not found. Would you like to be redirected to the home page?</p>
+			</div>
+		</div>
+		<div class="flex justify-end m-[10px] grow">
+			<a href="/" role="button" class="min-w-button"/>OK</a>
+		</div>
+	</div>
+</div>
 {{ end }}
