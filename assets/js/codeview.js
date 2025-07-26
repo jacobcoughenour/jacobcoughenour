@@ -1,8 +1,3 @@
-// improvements to the existing code highlighting
-
-import dmpModule from "./diff_match_patch_uncompressed.js";
-
-
 function init() {
 	const views = [];
 	const idMap = {};
@@ -10,8 +5,6 @@ function init() {
 	const elements = document.getElementsByClassName("codeview");
 	if (elements.length === 0)
 		return;
-
-	var dmp = new dmpModule.diff_match_patch();
 
 	[...elements].forEach(/** @type {Element} */ view => {
 
@@ -38,52 +31,6 @@ function init() {
 		views.push(data);
 		if (params?.id) {
 			idMap[params?.id] = data;
-		}
-	});
-
-	function diff_lineMode(text1, text2) {
-		var a = dmp.diff_linesToChars_(text1, text2);
-		var lineText1 = a.chars1;
-		var lineText2 = a.chars2;
-		var lineArray = a.lineArray;
-		var diffs = dmp.diff_main(lineText1, lineText2, false);
-		dmp.diff_charsToLines_(diffs, lineArray);
-		return diffs;
-	}
-	
-	views.forEach(view => {
-		if (!view.params.diff || !idMap[view.params.diff]) {
-			return;
-		}
-		view.diff = diff_lineMode(idMap[view.params.diff].raw, view.raw);
-		console.log(view.diff);
-
-		// var curSpan = 0;
-		// for (var i = 0; i < view.diff.length && curSpan < view.lineElements.length; i++) {
-		// 	const span = view.lineElements[curSpan];
-		// 	console.log(span.innerHTML)
-
-		// }
-	});
-
-	function collapseDiff(view) {
-		if (!view.diff)
-			return;
-		console.log(view);
-
-		const windowLines = 1;
-
-		view.lineElements.forEach((e, i) => {
-			var diffLine = view.diff[i];
-
-			// e.style.display = "none";
-
-		});
-	}
-
-	views.forEach(view => {
-		if (view.diff) {
-			collapseDiff(view);
 		}
 	});
 }

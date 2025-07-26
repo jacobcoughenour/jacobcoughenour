@@ -1,0 +1,5 @@
+<div class="shaderview mt-2 flex flex-col">
+	<script type="text" id="params">{{ .Params | jsonify }}</script>
+	<script type="text" id="code">{{ (strings.TrimSpace .Inner ) }}</script>
+	<canvas id="shaderview-canvas" />
+</div>

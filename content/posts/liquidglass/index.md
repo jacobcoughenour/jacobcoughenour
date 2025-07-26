@@ -42,6 +42,14 @@ SDFs are pretty simple in concept. You give them a point in space (in our case, 
 
 {{< figure src=sdf1.png width=320 >}}
 
+{{< shader >}}
+uniform float test; // default(0.5) hint_range(0, 1.0)
+
+void main() {
+	gl_FragColor = vec4(mod(TIME, 1.0),test,0.0,1.0);
+}
+{{< /shader >}}
+
 {{< code lang=glsl filename=liquidglass.gdshader >}}
 shader_type canvas_item;
 
