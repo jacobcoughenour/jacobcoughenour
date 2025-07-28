@@ -8,11 +8,11 @@ input {
   }
 }
 
-input[type="url"],
-input[type="text"],
-input[type="email"],
-input[type="number"],
-input[type="password"],
+input[type="url"]:not(.lil-gui input),
+input[type="text"]:not(.lil-gui input),
+input[type="email"]:not(.lil-gui input),
+input[type="number"]:not(.lil-gui input),
+input[type="password"]:not(.lil-gui input),
 textarea {
   font: var(--font);
   padding: 3px 4px 5px;

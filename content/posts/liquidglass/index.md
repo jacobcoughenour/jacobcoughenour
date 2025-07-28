@@ -42,14 +42,6 @@ SDFs are pretty simple in concept. You give them a point in space (in our case, 
 
 {{< figure src=sdf1.png width=320 >}}
 
-{{< shader >}}
-uniform float test; // default(0.5) hint_range(0, 1.0)
-
-void main() {
-	gl_FragColor = vec4(mod(TIME, 1.0),test,0.0,1.0);
-}
-{{< /shader >}}
-
 {{< code lang=glsl filename=liquidglass.gdshader >}}
 shader_type canvas_item;
 
@@ -135,13 +127,11 @@ void fragment() {
 
 # Refractions
 
-The main characteristic of Liquid Glass is the way it bends the light around it in interesting ways. We are going to pretty much fake this effect with displacement. We just have to displace the UV coordinate that is sampling the screen texture along the edges but that is easier said than done. 
+The main characteristic of Liquid Glass is the way it bends the light around it in interesting ways. We approximate this effect with displacement. We just have to displace the UV coordinate that is sampling the screen texture along the edges but that is easier said than done.
 
 So we need no displacement in the center of the glass then we want to increase the displacement amount the closer we get to the edge. If only we knew how close we are to the edge...
 
 With our SDF we know how much we want to displace the screen but we don't know the direction. It sounds like we need something like a normal or displacement map to tell us which direction and by how much to displace the screen UV.
-
-> I actually struggled with this part in my first go. I tried reconstructing the normal by sampling the SDF multiple times around the current UV and using the difference
 
 If you looked at the next article on Inigo's website you would already know where i'm going with this. There is a modified version of his SDFs we can use that will give us the signed distance and an x and y direction he calls the gradient.
 
@@ -152,28 +142,87 @@ After some modifications, We now have something resembling a normal map for our 
 {{< figure src=normal.png width=320 >}}
 
 {{< code lang=glsl filename=liquidglass.gdshader >}}
+// todo
+{{< /code >}}
+
+We have the normal map for a cone now, so now we need to flatten the normal in the center and round out the edges. I ended up making a side profile view of this to verify my math and I ported it to WebGL so you can play with it below. The left side is the normal of our liquid glass shape and the right side is a side profile so we can visualize the depth the normal map is implying.
+
+{{< shader >}}
+uniform float edge_distance; // default(0.25) hint_range(0.0, 0.5);
+uniform float edge_roundness; // hint_range(0.0, 1.0);
+uniform bool debug_normals; // default(true)
+
 vec3 sdgCircle(in vec2 p, in float r) {
 	float d = length(p);
 	return vec3(d-r, p/d);
 }
 
-void fragment() {
-	vec3 sdg = sdgCircle(UV.xy - 0.5, 0.4);
-	
-	float d = sdg.x;
-	vec2 normalxy = normalize(sdg.yz);
-	float norm_dist = remap(d, -1.0, 0.0, 1.0, 0.0);
-	vec3 normal = mix(vec3(normalxy, 0.5), vec3(0.0, 0.0, 1.0), norm_dist);
-	normal = normal * 0.5 + 0.5;
-	
-	if (d < 0.0) {
-		COLOR.rgb = normal;
+void main() {
+	vec4 COLOR = vec4(0.5, 0.5, 0.5, 1.0);
+	float radius = 0.5;
+	vec2 uv = UV;
+	if (UV.x < 0.5) {
+		uv.x = remap(uv.x, 0.0, 0.5, 0.0, 1.0);
 	} else {
-		COLOR.a = 0.0;
+		uv.x = remap(uv.x, 0.5, 1.0, 0.0, 1.0);
+		uv.y = 0.5;
 	}
-}
-{{< /code >}}
 
+	vec3 sdg = sdgCircle(uv - 0.5, radius);
+
+	float min_edge_distance = min(edge_distance, radius);
+
+	float d = sdg.x;
+	// normalize the distance to the edge from 0 to 1
+	float normalized_edge_distance = clamp01(remap(d, -min_edge_distance, 0.0, 0.0, 1.0));
+	// determine the depth of the glass
+	float depth = mix(1.0 - normalized_edge_distance, sqrt(1.0 - (normalized_edge_distance * normalized_edge_distance)), edge_roundness);
+
+	vec2 normalxy = normalize(sdg.yz);
+	vec3 normal = vec3(normalxy, 1.0);
+	normal = normal * 0.5 + 0.5;
+
+	float edge = clamp01(remap(d, -min_edge_distance, 0.0, 0.0, 1.0));
+
+	if (edge <= 0.0) {
+		// normal from center is always constant
+		normal = vec3(0.5, 0.5, 1.0);
+	} else {
+		// calculate normal for edge
+		normal = mix(
+			normal,
+			clamp(mix(vec3(0.5, 0.5, 1.0), normal, edge), 0.0, 1.0),
+			edge_roundness);
+		normal.z = remap(depth, 0.0, 1.0, 0.5, 1.0);
+	}
+
+	if (UV.x < 0.5) {
+		if (d < 0.0) {
+			COLOR.rgb = vec3(0.5);
+		} else {
+			COLOR.a = 0.0;
+		}
+	} else {
+		if ((1.0 - UV.y) < depth * min_edge_distance) {
+			COLOR.rgb = vec3(0.5);
+		} else {
+			COLOR.a = 0.0;
+		}
+	}
+
+	if (debug_normals) {
+		COLOR.rgb = normal;
+	}
+
+	gl_FragColor = COLOR;
+}
+{{< /shader >}}
+
+And here are the changes we need to make in the Godot shader:
+
+{{< code lang=glsl filename=liquidglass.gdshader >}}
+// todo
+{{< /code >}}
 
 Now we can use these normals for our displacement and now we have refraction!
 

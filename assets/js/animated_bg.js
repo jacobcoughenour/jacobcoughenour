@@ -1,45 +1,18 @@
-<canvas id="bg-canvas"></canvas>
-<script>
-	const vertex = `
+import { utils } from "./shaderutils";
+
+const vertex = `
 attribute vec4 a_vertexPos;
 void main(void) {
 	gl_Position = a_vertexPos;
 }`;
-	const fragment = `
+const fragment = `
 precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_scroll;
 uniform vec3 u_bgColorRgb;
 uniform float u_time;
 
-vec3 linear_srgb_to_oklab(vec3 c) {
-	float l = 0.4122214708 * c.r + 0.5363325363 * c.g + 0.0514459929 * c.b;
-	float m = 0.2119034982 * c.r + 0.6806995451 * c.g + 0.1073969566 * c.b;
-	float s = 0.0883024619 * c.r + 0.2817188376 * c.g + 0.6299787005 * c.b;
-	float l_ = pow(l, 1.0 / 3.0);
-	float m_ = pow(m, 1.0 / 3.0);
-	float s_ = pow(s, 1.0 / 3.0);
-	return vec3(
-		0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_,
-		1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_,
-		0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_
-	);
-}
-
-// warning returns unclamped rgb
-vec3 oklab_to_linear_srgb(vec3 c) {
-	float l_ = c.r + 0.3963377774 * c.g + 0.2158037573 * c.b;
-	float m_ = c.r - 0.1055613458 * c.g - 0.0638541728 * c.b;
-	float s_ = c.r - 0.0894841775 * c.g - 1.2914855480 * c.b;
-	float l = l_ * l_ * l_;
-	float m = m_ * m_ * m_;
-	float s = s_ * s_ * s_;
-	return vec3(
-		+4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
-		-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
-		-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s
-	);
-}
+${utils}
 
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
 vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
@@ -213,109 +186,109 @@ void main(void) {
 	noise_layer.r += noise;
 	// dither the L channel
 	noise_layer.r = dither8(gl_FragCoord.xy / res, noise_layer.r);
-	
+
 	vec3 bg_rgb = oklab_to_linear_srgb(mix(bg_lab, noise_layer, clamp(noise_layer.r * noise_opacity, 0.0, 1.0)));
 
 	gl_FragColor = vec4(bg_rgb,1.0);
 }`;
 
-	function initWebGLCanvas() {
-		try {
-			const canvas = document.getElementById("bg-canvas");
-			const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-			return gl;
-		} catch (ex) {
-			console.error("failed to create webgl context:", ex);
-			return null;
-		}
+function initWebGLCanvas() {
+	try {
+		const canvas = document.getElementById("bg-canvas");
+		const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+		return gl;
+	} catch (ex) {
+		console.error("failed to create webgl context:", ex);
+		return null;
 	}
+}
 
-	function loadShader(/** @type {WebGLRenderingContext} **/ gl, /** @type {GLenum} **/ type, source) {
-		const shader = gl.createShader(type);
-		gl.shaderSource(shader, source);
-		gl.compileShader(shader);
-		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			console.error("failed to compile shader:", gl.getShaderInfoLog(shader));
-			gl.deleteShader(shader);
-			return null;
-		}
-		return shader;
+function loadShader(/** @type {WebGLRenderingContext} **/ gl, /** @type {GLenum} **/ type, source) {
+	const shader = gl.createShader(type);
+	gl.shaderSource(shader, source);
+	gl.compileShader(shader);
+	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+		console.error("failed to compile shader:", gl.getShaderInfoLog(shader));
+		gl.deleteShader(shader);
+		return null;
 	}
+	return shader;
+}
 
-	function createShaderProgram(/** @type {WebGLRenderingContext} **/ gl, vertexShader, fragmentShader) {
-		const program = gl.createProgram();
-		gl.attachShader(program, vertexShader);
-		gl.attachShader(program, fragmentShader);
-		gl.linkProgram(program);
-		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-			console.error("failed to create shader program:", gl.getProgramInfoLog(program));
-			return null;
-		}
-		return program;
+function createShaderProgram(/** @type {WebGLRenderingContext} **/ gl, vertexShader, fragmentShader) {
+	const program = gl.createProgram();
+	gl.attachShader(program, vertexShader);
+	gl.attachShader(program, fragmentShader);
+	gl.linkProgram(program);
+	if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+		console.error("failed to create shader program:", gl.getProgramInfoLog(program));
+		return null;
 	}
+	return program;
+}
 
-	function makeQuadBuffer(/** @type {WebGLRenderingContext} **/ gl) {
-		const verts = new Float32Array([
-			1.0, 1.0,
-			-1.0, 1.0,
-			-1.0, -1.0,
-			-1.0, -1.0,
-			1.0, -1.0,
-			1.0, 1.0
-		]);
-		const buf = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-		gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
-		return buf;
-	}
+function makeQuadBuffer(/** @type {WebGLRenderingContext} **/ gl) {
+	const verts = new Float32Array([
+		1.0, 1.0,
+		-1.0, 1.0,
+		-1.0, -1.0,
+		-1.0, -1.0,
+		1.0, -1.0,
+		1.0, 1.0
+	]);
+	const buf = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+	gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+	return buf;
+}
 
-	function init() {
-		/** @type {WebGLRenderingContext} **/
-		const gl = initWebGLCanvas();
-		if (!gl)
-			return;
+function init() {
+	/** @type {WebGLRenderingContext} **/
+	const gl = initWebGLCanvas();
+	if (!gl)
+		return;
 
-		const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertex);
-		const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragment);
-		const shaderProgram = createShaderProgram(gl, vertexShader, fragmentShader);
+	const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertex);
+	const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragment);
+	const shaderProgram = createShaderProgram(gl, vertexShader, fragmentShader);
 
-		gl.clearColor(0, 0, 0, 0);
+	gl.clearColor(0, 0, 0, 0);
 
-		const quadBuf = makeQuadBuffer(gl);
+	const quadBuf = makeQuadBuffer(gl);
 
-		const vertexPositions = gl.getAttribLocation(shaderProgram, "a_vertexPos");
-		gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
-		gl.vertexAttribPointer(vertexPositions, 2, gl.FLOAT, false, 0, 0);
-		gl.enableVertexAttribArray(vertexPositions);
+	const vertexPositions = gl.getAttribLocation(shaderProgram, "a_vertexPos");
+	gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+	gl.vertexAttribPointer(vertexPositions, 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(vertexPositions);
 
-		const canvasSizeUniform = gl.getUniformLocation(shaderProgram, "u_resolution");
-		const scrollUniform = gl.getUniformLocation(shaderProgram, "u_scroll");
-		const timeUniform = gl.getUniformLocation(shaderProgram, "u_time");
-		const bgColorRgbUniform = gl.getUniformLocation(shaderProgram, "u_bgColorRgb");
-		const parts = [0.17, 0.11, 0.22];
+	const canvasSizeUniform = gl.getUniformLocation(shaderProgram, "u_resolution");
+	const scrollUniform = gl.getUniformLocation(shaderProgram, "u_scroll");
+	const timeUniform = gl.getUniformLocation(shaderProgram, "u_time");
+	const bgColorRgbUniform = gl.getUniformLocation(shaderProgram, "u_bgColorRgb");
+	const parts = [0.17, 0.11, 0.22];
 
-		const start = Date.now();
+	const start = Date.now();
 
-		function draw(delta) {
-			gl.canvas.width = window.innerWidth;
-			gl.canvas.height = window.innerHeight;
-			gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+	function draw(delta) {
+		gl.canvas.width = window.innerWidth;
+		gl.canvas.height = window.innerHeight;
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-			gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.clear(gl.COLOR_BUFFER_BIT);
 
-			gl.useProgram(shaderProgram);
+		gl.useProgram(shaderProgram);
 
-			gl.uniform2fv(canvasSizeUniform, [gl.canvas.width, gl.canvas.height]);
-			gl.uniform1f(scrollUniform, -document.body.getBoundingClientRect().top)
-			gl.uniform1f(timeUniform, ((start + performance.now() ) % 10000000) * 0.001);
-			gl.uniform3fv(bgColorRgbUniform, parts);
+		gl.uniform2fv(canvasSizeUniform, [gl.canvas.width, gl.canvas.height]);
+		gl.uniform1f(scrollUniform, -document.body.getBoundingClientRect().top)
+		gl.uniform1f(timeUniform, ((start + performance.now() ) % 10000000) * 0.001);
+		gl.uniform3fv(bgColorRgbUniform, parts);
 
-			gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-			requestAnimationFrame(draw);
-		}
+		gl.drawArrays(gl.TRIANGLES, 0, 6);
 
 		requestAnimationFrame(draw);
 	}
-	window.onload = init();
-</script>
+
+	requestAnimationFrame(draw);
+}
+
+module.exports = { init };

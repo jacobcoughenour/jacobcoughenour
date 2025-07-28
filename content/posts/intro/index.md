@@ -49,7 +49,7 @@ I'm also using [7.css](https://github.com/khang-nd/7.css) which is a bunch of cs
 
 {{< figure src="bg.png" alt="background example" >}}
 
-You might have noticed the background is moving. It is a WebGL canvas with a fullscreen quad and a custom fragment shader. The shader is some 3D perlin noise and a dithering pattern. Here is the code for it: [animated-bg.html](https://github.com/jacobcoughenour/jacobcoughenour/blob/main/layouts/_partials/animated-bg.html). For the time uniform, I'm using Date.now() so that the animation stays in sync with the system time to make seamless between page navigations. Let me know if you want to see a full breakdown of how it works.
+You might have noticed the background is moving. It is a WebGL canvas with a fullscreen quad and a custom fragment shader. The shader is some 3D perlin noise and a dithering pattern. Here is the code for it: [animated_bg.js](https://github.com/jacobcoughenour/jacobcoughenour/blob/main/assets/js/animated_bg.js). For the time uniform, I'm using Date.now() so that the animation stays in sync with the system time to make seamless between page navigations. Let me know if you want to see a full breakdown of how it works.
 
 ## Bluesky Comments
 

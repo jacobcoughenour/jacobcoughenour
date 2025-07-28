@@ -1,4 +1,5 @@
-import GUI from 'lil-gui';
+import GUI from "lil-gui";
+import { utils } from "./shaderutils";
 
 function init() {
 	const elements = document.getElementsByClassName("shaderview");
@@ -8,9 +9,9 @@ function init() {
 }
 
 const decodeHtmlEntity = function (str) {
-	return str.replace(/&#(\d+);/g, function (match, dec) {
-		return String.fromCharCode(dec);
-	});
+	var txt = document.createElement("textarea");
+	txt.innerHTML = str;
+	return txt.value;
 };
 
 module.exports = { init };
@@ -20,28 +21,34 @@ function makeShaderView(/** @type {HTMLElement} */ view) {
 	const params = JSON.parse(view.querySelector("script#params").innerHTML);
 	const rawCode = decodeHtmlEntity(view.querySelector("script#code").innerHTML);
 	const canvas = view.querySelector("canvas#shaderview-canvas");
+	const controlsRoot = view.querySelector("#controls-root");
 
 	const gui = new GUI({
-		container: view
+		container: controlsRoot,
 	});
 
 	/** @type {WebGLRenderingContext} **/
-	const gl = initWebGLCanvas(canvas);
+	const gl = initWebGLCanvas(canvas); 
 	if (!gl)
 		return;
 
 	// todo allow way to override this
 	const vertex = `
-attribute vec4 a_vertexPos;
+attribute vec4 a_position;
+attribute vec2 a_texcoord;
+varying vec2 UV;
 void main(void) {
-	gl_Position = a_vertexPos;
+	gl_Position = a_position;
+	UV = a_texcoord;
 }`;
 
 	const fragment = `
 precision mediump float;
 uniform vec2 RESOLUTION;
 uniform float TIME;
-	${rawCode}`;
+varying vec2 UV;
+${utils}
+${rawCode}`;
 
 	const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertex);
 	const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragment);
@@ -50,11 +57,18 @@ uniform float TIME;
 	gl.clearColor(0, 0, 0, 0);
 
 	const quadBuf = makeQuadBuffer(gl);
+	const textcoordBuf = makeTexcoordsBuffer(gl);
 
-	const vertexPositions = gl.getAttribLocation(shaderProgram, "a_vertexPos");
+	const vertexPositions = gl.getAttribLocation(shaderProgram, "a_position");
+	const texcoordLocation = gl.getAttribLocation(shaderProgram, "a_texcoord");
+	
 	gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
 	gl.vertexAttribPointer(vertexPositions, 2, gl.FLOAT, false, 0, 0);
 	gl.enableVertexAttribArray(vertexPositions);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, textcoordBuf);
+	gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(texcoordLocation);
 
 	const canvasSizeUniform = gl.getUniformLocation(shaderProgram, "RESOLUTION");
 	const timeUniform = gl.getUniformLocation(shaderProgram, "TIME");
@@ -70,7 +84,9 @@ uniform float TIME;
 			const parts = e.split(" ").filter(e => e.trim().length > 0);
 			const name = parts[2].replace(";", "");
 			return [name, parseUniformHints(e)];
-		}))
+		}));
+	
+	gl.useProgram(shaderProgram);
 	
 	const numUniforms = gl.getProgramParameter(shaderProgram, gl.ACTIVE_UNIFORMS);
 	for (let i = 0; i < numUniforms; i++) {
@@ -78,16 +94,47 @@ uniform float TIME;
 		if (uniformInfo.name === "TIME" || uniformInfo.name === "RESOLUTION")
 			continue;
 
-		console.log(uniformInfo);
+		const hint = uniformHints[uniformInfo.name];
+		const location = gl.getUniformLocation(shaderProgram, uniformInfo.name);
 
-		const hint = uniformHints[uniformInfo.name]
-
-		// const type = glEnumToString(uniformInfo.type);
-		
 		if (uniformInfo.type === gl.FLOAT) {
 			const value = hint?.["default"]?.[0] || 0;
 			uniformValues[uniformInfo.name] = value;
-			gui.add(uniformValues, uniformInfo.name);
+			const setter = (v) => gl.uniform1f(location, v);
+			setter(value);
+			const slider = gui.add(uniformValues, uniformInfo.name)
+				.onChange((val) => {
+					setter(val);
+					!isDynamic && requestAnimationFrame(draw);
+				});
+			if (hint?.["hint_range"]) {
+				slider.min(hint["hint_range"][0]).max(hint["hint_range"][1]);
+			}
+		} else if (uniformInfo.type === gl.BOOL) {
+			const value = hint?.["default"]?.[0] === true;
+			uniformValues[uniformInfo.name] = value;
+			const setter = (v) => gl.uniform1i(location, v ? 1 : 0);
+			setter(value);
+			gui.add(uniformValues, uniformInfo.name)
+				.onChange((val) => {
+					setter(val);
+					!isDynamic && requestAnimationFrame(draw);
+				});
+		} else {
+			// todo parse components
+			const value = hint?.["default"]?.[0] || 0;
+			uniformValues[uniformInfo.name] = 0;
+			const setter = (v) => gl.uniform3f(
+				location,
+				((v & 0xFF0000) >>> 16) / 255.0,
+				((v & 0xFF00) >>> 8) / 255.0,
+				(v & 0xFF) / 255.0);
+			setter(value);
+			gui.addColor(uniformValues, uniformInfo.name)
+				.onChange((val) => {
+					setter(val);
+					!isDynamic && requestAnimationFrame(draw);
+				});
 		}
 	}
 
@@ -100,15 +147,12 @@ uniform float TIME;
 
 		gl.useProgram(shaderProgram);
 
-		gl.uniform2fv(canvasSizeUniform, [gl.canvas.width, gl.canvas.height]);
+		gl.uniform2fv(canvasSizeUniform, [gl.viewport.width, gl.viewport.height]);
 		gl.uniform1f(timeUniform, ((start + performance.now()) % 10000000) * 0.001);
-
-		// todo update dynamic uniforms
 
 		gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-		if (isDynamic)
-			requestAnimationFrame(draw);
+		isDynamic && requestAnimationFrame(draw);
 	}
 
 	requestAnimationFrame(draw);
@@ -152,8 +196,11 @@ function parseUniformHints(/** @type {string} */ uniformLine) {
 	parts.forEach(e => {
 		const start = e.indexOf("(");
 		const end = e.indexOf(")");
-		if (start === -1 || end === -1)
+		if (start === -1 || end === -1) {
+			const type = e.trim();
 			hints[type] = [];
+			return;
+		}
 		const type = e.slice(0, start).trim();
 		const params = e
 			.slice(start + 1, end)
@@ -202,6 +249,21 @@ function makeQuadBuffer(/** @type {WebGLRenderingContext} **/ gl) {
 	const buf = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buf);
 	gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+	return buf;
+}
+
+function makeTexcoordsBuffer(/** @type {WebGLRenderingContext} **/ gl) {
+	const uvs = new Float32Array([
+		1.0, 0.0,
+		0.0, 0.0,
+		0.0, 1.0,
+		0.0, 1.0,
+		1.0, 1.0,
+		1.0, 0.0
+	]);
+	const buf = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+	gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
 	return buf;
 }
 

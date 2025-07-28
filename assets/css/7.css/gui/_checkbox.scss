@@ -7,7 +7,7 @@
   --checkmark-left: 2px;
 }
 
-input[type="checkbox"] {
+input[type="checkbox"]:not(.lil-gui input) {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;

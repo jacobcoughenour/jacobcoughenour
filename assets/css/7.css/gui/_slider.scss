@@ -7,7 +7,7 @@
   --thumb-icon-box-active: url("./icon/slider-indicator-box-active.png");
 }
 
-input[type="range"] {
+input[type="range"]:not(.lil-gui input) {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
