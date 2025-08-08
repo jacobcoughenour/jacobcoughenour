@@ -57,7 +57,7 @@ void fragment() {
 }
 {{< /code >}}
 
-We can add some of the code Inigo Quilez likes to use to visualize the signed distance being returned by the function.
+We can add some of the code from Inigo Quilez's examples to visualize the signed distance being returned by the function.
 
 {{< figure src=sdf2.png width=320 >}}
 
@@ -74,7 +74,7 @@ void fragment() {
 }
 {{< /code >}}
 
-Now just blur the parts inside the shape and don't blur the parts outside the shape
+Then we can blur the parts inside the shape and don't blur the parts outside the shape
 
 {{< figure src=sdf3.png width=320 >}}
 
@@ -142,15 +142,40 @@ After some modifications, We now have something resembling a normal map for our 
 {{< figure src=normal.png width=320 >}}
 
 {{< code lang=glsl filename=liquidglass.gdshader >}}
-// todo
+uniform sampler2D screen_texture : hint_screen_texture;
+uniform float radius : hint_range(0.0, 1.0, 0.1);
+
+vec3 sdgCircle(in vec2 p, in float r) {
+    float d = length(p);
+    return vec3(d-r, p/d);
+}
+
+void fragment() {
+	vec3 sdg = sdgCircle(UV - 0.5, radius);
+
+	// signed distance
+	float d = sdg.x;
+
+	// convert the gradient to a normal
+	vec2 normalxy = normalize(sdg.yz);
+	vec3 normal = vec3(normalxy, 1.0);
+	normal = normal * 0.5 + 0.5;
+
+	if (d < 0.0) {
+		COLOR.rgb = normal;
+	} else {
+		COLOR.a = 0.0;
+	}
+}
 {{< /code >}}
 
-We have the normal map for a cone now, so now we need to flatten the normal in the center and round out the edges. I ended up making a side profile view of this to verify my math and I ported it to WebGL so you can play with it below. The left side is the normal of our liquid glass shape and the right side is a side profile so we can visualize the depth the normal map is implying.
+It looks great until you realize this is the normalmap for a cone and not a sphere. You can 
+We have the normal map for a cone, so now we need to flatten the normal in the center and round out the edges. I ended up making a side profile view of this to verify my math and I ported it to WebGL so you can play with it below. The left side is the normal of our liquid glass shape and the right side is a side profile so we can visualize the depth the normal map is implying.
 
 {{< shader >}}
 uniform float edge_distance; // default(0.25) hint_range(0.0, 0.5);
 uniform float edge_roundness; // hint_range(0.0, 1.0);
-uniform bool debug_normals; // default(true)
+uniform bool show_normals; // default(true)
 
 vec3 sdgCircle(in vec2 p, in float r) {
 	float d = length(p);
@@ -210,7 +235,7 @@ void main() {
 		}
 	}
 
-	if (debug_normals) {
+	if (show_normals) {
 		COLOR.rgb = normal;
 	}
 
@@ -221,7 +246,63 @@ void main() {
 And here are the changes we need to make in the Godot shader:
 
 {{< code lang=glsl filename=liquidglass.gdshader >}}
-// todo
+shader_type canvas_item;
+
+#include "oklab.gdshaderinc"
+#include "util.gdshaderinc"
+
+uniform sampler2D screen_texture : hint_screen_texture;
+uniform float radius : hint_range(0.0, 1.0, 0.1);
+uniform float edge_distance : hint_range(0.0, 1.0, 0.01);
+uniform float edge_normal_roundness : hint_range(0.0, 1.0, 0.01);
+uniform bool debug_normals;
+
+vec3 sdgCircle(in vec2 p, in float r) {
+    float d = length(p);
+    return vec3(d-r, p/d);
+}
+
+void fragment() {
+	vec2 uv = UV;
+
+	vec3 sdg = sdgCircle(uv - 0.5, radius);
+
+	float min_edge_distance = min(edge_distance, radius);
+
+	float d = sdg.x;
+	// normalize the distance to the edge from 0 to 1
+	float normalized_edge_distance = clamp01(remap(d, -min_edge_distance, 0.0, 0.0, 1.0));
+	// determine the depth of the glass
+	float depth = mix(1.0 - normalized_edge_distance, sqrt(1.0 - (normalized_edge_distance * normalized_edge_distance)), edge_normal_roundness);
+
+	vec2 normalxy = normalize(sdg.yz);
+	vec3 normal = vec3(normalxy, 1.0);
+	normal = normal * 0.5 + 0.5;
+
+	float edge = clamp01(remap(d, -min_edge_distance, 0.0, 0.0, 1.0));
+
+	if (edge <= 0.0) {
+		// normal from center is always constant
+		normal = vec3(0.5, 0.5, 1.0);
+	} else {
+		// calculate normal for edge
+		normal = mix(
+			normal,
+			clamp(mix(vec3(0.5, 0.5, 1.0), normal, edge), 0.0, 1.0),
+			edge_normal_roundness);
+		normal.z = remap(depth, 0.0, 1.0, 0.5, 1.0);
+	}
+
+	if (d < 0.0) {
+		COLOR.rgb = vec3(1.0);
+	} else {
+		COLOR.a = 0.0;
+	}
+
+	if (debug_normals) {
+		COLOR.rgb = normal;
+	}
+}
 {{< /code >}}
 
 Now we can use these normals for our displacement and now we have refraction!
