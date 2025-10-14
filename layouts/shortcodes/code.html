@@ -1,15 +1,20 @@
 <div class="codeview mt-2 flex flex-col">
-	<script type="text" id="params">{{ .Params | jsonify }}</script>
-	<script type="text" id="code">{{ (strings.TrimSpace .Inner ) }}</script>
+	<script type="text" id="params">
+		{{ .Params | jsonify }}
+	</script>
+	<script type="text" id="code">
+		{{ (strings.TrimSpace .Inner ) }}
+	</script>
+	{{ if isset .Params "filename" }}
 	<ul role="menubar" class="bg-red-500 flex space-x-1 items-center">
 		<div class="ml-2">📝</div>
-		<div class="px-2 py-1 flex-1">
-			{{ .Get "filename" }}
-		</div>
+		<div class="px-2 py-1 flex-1">{{ .Get "filename" }}</div>
 		<!-- <button class="diff-button">show all</button> -->
 		<button class="copy-button">copy</button>
 	</ul>
+	{{ end }}
 	<div class="flex-1">
-		{{ transform.Highlight (strings.TrimSpace .Inner ) (.Get "lang") "lineNos=inline, style=tokyonight-moon" }}
+		{{ transform.Highlight (strings.TrimSpace .Inner ) (.Get "lang")
+		"lineNos=inline, style=tokyonight-moon" }}
 	</div>
 </div>

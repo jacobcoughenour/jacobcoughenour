@@ -13,9 +13,11 @@ function init() {
 
 		// copy button
 		const copyButton = view.getElementsByClassName("copy-button")[0];
-		copyButton.addEventListener("click", () => {
-			copyTextToClipboard(raw);
-		});
+		if (copyButton) {
+			copyButton.addEventListener("click", () => {
+				copyTextToClipboard(raw);
+			});
+		}
 
 		const codeElement = view.querySelector("code");
 		const lineElements = [...codeElement.children];
