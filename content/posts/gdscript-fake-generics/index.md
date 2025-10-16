@@ -1,12 +1,19 @@
 +++
 title = 'Faking generics in GDScript with GDScript'
-date = 2025-10-15T19:17:39-04:00
+date = 2025-10-15T01:17:39-04:00
+tags = ['godot']
 draft = true
+thumb = 'godot.png'
+bsky = 'https://bsky.app/profile/jacobcoughenour.com/post/3ly7ot47pek2x'
 +++
+
+![A Godot plush sitting on top of a graphics card surrounded by lego plants](godot.png)
+
+> ICYMI: The Godot Plushie is available again for a limited time. All revenue made will directly benefit the Godot Development Fund. Get it here: https://www.makeship.com/products/godot-robot-v2-plushie
 
 [Static typing](https://docs.godotengine.org/en/latest/getting_started/scripting/gdscript/static_typing.html) in GDScript is great for [improving the performance](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/static_typing.html#:~:text=Also%2C%20typed%20GDScript%20improves%20performance) and maintainability of your code. The problem is it's not as complete as similar languages.
 
-One of the issues I have been running into is the lack of typed nullables. So if we have a function that could either return null or Vector2, we can't set the return type to Vector2.
+One of the issues I have been running into is the lack of typed nullables. So if we have a function that could either return `null` or {{< godot_class class="Vector2" >}}, we can't set the return type to {{< godot_class class="Vector2" >}}.
 
 {{< code lang=gdscript >}}
 func get_player_position(player_id: int) -> Vector2:
@@ -58,7 +65,7 @@ if p != null:
 
 From what I can tell, this is the official way Godot wants use to handle this scenario.
 
-Ideally, I would want something like this:
+Ideally, I want something like this:
 {{< code lang=gdscript >}}
 func get_player_position(player_id: int) -> Optional[Vector2]:
 	if _data.has(player_id):
@@ -67,7 +74,7 @@ func get_player_position(player_id: int) -> Optional[Vector2]:
 	return null
 {{</ code >}}
 
-Then it would simplify what we do with the return value
+Then it would simplify how we handle the return value.
 {{< code lang=gdscript >}}
 var p = get_player_position(2) # Optional[Vector2]
 if p != null:

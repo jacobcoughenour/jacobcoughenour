@@ -280,12 +280,15 @@ function init() {
 
 		gl.uniform2fv(canvasSizeUniform, [gl.canvas.width, gl.canvas.height]);
 		gl.uniform1f(scrollUniform, -document.body.getBoundingClientRect().top)
-		gl.uniform1f(timeUniform, ((start + performance.now() ) % 10000000) * 0.001);
+		gl.uniform1f(timeUniform, ((start + performance.now()) % 10000000) * 0.001);
 		gl.uniform3fv(bgColorRgbUniform, parts);
 
 		gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-		requestAnimationFrame(draw);
+		const fps = 5;
+		setTimeout(() => {
+			requestAnimationFrame(draw);
+		}, 1000 / fps);
 	}
 
 	requestAnimationFrame(draw);
