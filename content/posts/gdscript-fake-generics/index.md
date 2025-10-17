@@ -99,7 +99,7 @@ When you think about it, we don't need our `Optional` to work with all the possi
 
 {{< code lang=gdscript filename=optional_vector2.gd >}}
 class_name OptionalVector2
-extends Object
+extends RefCounted
 
 var _has_value: bool
 var _value: Vector2
@@ -144,7 +144,7 @@ Now let's make an OptionalVector3.
 
 {{< code lang=gdscript filename=optional_vector3.gd >}}
 class_name OptionalVector3
-extends Object
+extends RefCounted
 
 var _has_value: bool
 var _value: Vector3
@@ -213,7 +213,7 @@ func get_file_name(source_data: Variant) -> String:
 	return "optional_" + source_data.filename
 	
 func generate_source(source_data: Variant) -> String:
-	return """extends Object
+	return """extends RefCounted
 class_name {typeName}
 
 var _has_value: bool
