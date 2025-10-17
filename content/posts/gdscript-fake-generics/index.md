@@ -127,9 +127,9 @@ Now we can refactor our `get_player_position` method to use it:
 {{< code lang=gdscript >}}
 func get_player_position(player_id: int) -> OptionalVector2:
 	if _data.has(player_id):
-		return _data[player_id].position
+		return OptionalVector2.with(_data[player_id].position)
 	# player not found
-	return null
+	return OptionalVector2.empty()
 # ...
 var name = get_player_name(2)
 if name.has_value():
