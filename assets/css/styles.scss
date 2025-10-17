@@ -195,6 +195,13 @@ article#article-root {
     @apply my-2;
   }
 
+  blockquote {
+    padding: 0 1em;
+    color: var(--on-surface);
+    background-color: var(--surface);
+    border-left: .25em solid var(--border-color);
+  }
+
   figure img, p>img, figure video {
     max-height: 640px;
     @apply my-2;

@@ -25,7 +25,7 @@ func get_player_position(player_id: int) -> Vector2:
 
 The editor gives us an error on line 5: `Cannot return a value of type "null" as "Vector2"`
 
-Instead of returning null, let's return `Vector2.ZERO`:
+Instead of returning `null`, let's return `Vector2.ZERO`:
 
 {{< code lang=gdscript >}}
 func get_player_position(player_id: int) -> Vector2:
@@ -82,17 +82,17 @@ if p != null:
 	print(p.distance_to(_local_player))
 {{</ code >}}
 
-_In this example, I'm assuming that it would internally wrap the value and do a bit of type inference to know that `name` isn't null after my null check._
+> In this example, I'm assuming that it would internally wrap the value and do a bit of type inference to know that `name` isn't null after my null check.
 
 # Generics
 
-If you are coming from another language, your instinct would be to make a generic type that would wrap the value and still retain the type for when you try to unwrap it. A while back, Godot added Typed Arrays and Typed Dictionaries. So now you can specify the type for the items in an array like this:
+If you are coming from another language, your instinct would be to make a generic type that would wrap the value and still retain the type for when you try to unwrap it. A while back, Godot added typed arrays and typed dictionaries. So now you can specify the type for the items in an array like this:
 
 {{< code lang=gdscript >}}
 var a: Array[int] = [1, 2, 3]
 {{</ code >}}
 
-You might assume now that GDScript has a way of defining generic types since it supports type parameters for Array and Dictionary, but it doesn't. There is currently no way for me to make `Optional[T]` valid syntax in GDScript without heavily modifying the engine.
+You might assume now that GDScript has a way of defining generic types since it supports type parameters for {{< godot_class class="Array" >}} and {{< godot_class class="Dictionary" >}}, but it doesn't. There is currently no way for me to make `Optional[T]` valid syntax in GDScript without heavily modifying the engine.
 
 # Faking it
 
