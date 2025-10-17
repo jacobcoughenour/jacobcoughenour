@@ -1,8 +1,7 @@
 +++
 title = 'Faking generics in GDScript with GDScript'
-date = 2025-10-15T01:17:39-04:00
+date = 2025-10-16T20:13:39-04:00
 tags = ['godot']
-draft = true
 thumb = 'godot.png'
 bsky = 'https://bsky.app/profile/jacobcoughenour.com/post/3ly7ot47pek2x'
 +++
