@@ -3,9 +3,9 @@
            {{- with .Get "class" }}{{ . }}{{- end }}"
 {{- end -}}>
     {{- if .Get "src" -}}
-        <a href="{{ .Get "src" }}"{{ with .Get "target" }} target="{{ . }}"{{ end }}{{ with .Get "rel" }} rel="{{ . }}"{{ end }}>
+        <a href="{{- if strings.HasPrefix (.Get "src") "/" }}{{ absURL (.Get "src") }}{{ else }}{{ urls.JoinPath (.Page.RelPermalink) (.Get "src") }}{{- end }}"{{ with .Get "target" }} target="{{ . }}"{{ end }}{{ with .Get "rel" }} rel="{{ . }}"{{ end }}>
     {{- end }}
-    <img loading="lazy" src="{{ .Get "src" }}{{- if eq (.Get "align") "center" }}#center{{- end }}"
+    <img loading="lazy" src="{{- if strings.HasPrefix (.Get "src") "/" }}{{ absURL (.Get "src") }}{{ else }}{{ urls.JoinPath (.Page.RelPermalink) (.Get "src") }}{{- end }}{{- if eq (.Get "align") "center" }}#center{{- end }}"
          {{- if or (.Get "alt") (.Get "caption") }}
          alt="{{ with .Get "alt" }}{{ . }}{{ else }}{{ .Get "caption" | markdownify| plainify }}{{ end }}"
          {{- end -}}

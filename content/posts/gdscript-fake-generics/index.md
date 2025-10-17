@@ -6,7 +6,7 @@ thumb = 'godot.png'
 bsky = 'https://bsky.app/profile/jacobcoughenour.com/post/3m3dywcwstc2x'
 +++
 
-![A Godot plush sitting on top of a graphics card surrounded by lego plants](godot.png)
+{{< figure src="godot.png" alt="A Godot plush sitting on top of a graphics card surrounded by lego plants" >}}
 
 > ICYMI: The Godot Plushie is available again for a limited time. All revenue made will directly benefit the Godot Development Fund. Get it here: https://www.makeship.com/products/godot-robot-v2-plushie
 

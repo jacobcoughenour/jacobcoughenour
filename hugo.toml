@@ -1,5 +1,6 @@
 languageCode = 'en-us'
 title = 'Jacob Coughenour'
+baseURL = 'https://jacobcoughenour.com/'
 
 [Author]
     name = "Jacob Coughenour"
